@@ -9,7 +9,7 @@ def get_app(sk_id_curr):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("SELECT * FROM credits WHERE SK_ID_CURR=?", (sk_id_curr,))
+    cur.execute("SELECT * FROM applications WHERE SK_ID_CURR=?", (sk_id_curr,))
     row = cur.fetchone()
     conn.close()
     if row:
@@ -30,7 +30,7 @@ def update_app():
     
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
-    cur.execute(f"UPDATE credits SET {fields} WHERE SK_ID_CURR=?", values)
+    cur.execute(f"UPDATE applications SET {fields} WHERE SK_ID_CURR=?", values)
     conn.commit()
     conn.close()
     
@@ -45,7 +45,7 @@ def create_app():
     
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
-    cur.execute("SELECT MAX(SK_ID_CURR) FROM credits")
+    cur.execute("SELECT MAX(SK_ID_CURR) FROM applications")
     max_id = cur.fetchone()[0]
     new_id = max_id + 1
     
@@ -53,7 +53,7 @@ def create_app():
     placeholders = ', '.join(['?' for _ in data])
     values = list(data.values())
     
-    cur.execute(f"INSERT INTO credits (SK_ID_CURR, {columns}) VALUES (?, {placeholders})", [new_id] + values)
+    cur.execute(f"INSERT INTO applications (SK_ID_CURR, {columns}) VALUES (?, {placeholders})", [new_id] + values)
     conn.commit()
     conn.close()
     
