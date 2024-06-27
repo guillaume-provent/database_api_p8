@@ -4,8 +4,8 @@ import sqlite3
 app = Flask(__name__)
 db_path = 'data.db'
 
-@app.route('/get_customer/<int:sk_id_curr>', methods=['GET'])
-def get_customer(sk_id_curr):
+@app.route('/get_app/<int:sk_id_curr>', methods=['GET'])
+def get_app(sk_id_curr):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
@@ -15,14 +15,14 @@ def get_customer(sk_id_curr):
     if row:
         return jsonify(dict(row))
     else:
-        return jsonify({"error": "Customer not found"}), 404
+        return jsonify({"error": "Dossier non trouvé"}), 404
 
-@app.route('/update_customer', methods=['PUT'])
-def update_customer():
+@app.route('/update_app', methods=['PUT'])
+def update_app():
     data = request.json
     sk_id_curr = data.get('SK_ID_CURR')
     if sk_id_curr is None:
-        return jsonify({"error": "SK_ID_CURR is required"}), 400
+        return jsonify({"error": "SK_ID_CURR requis"}), 400
     
     fields = ', '.join([f"{key}=?" for key in data.keys() if key != 'SK_ID_CURR'])
     values = [value for key, value in data.items() if key != 'SK_ID_CURR']
@@ -35,19 +35,19 @@ def update_customer():
     conn.close()
     
     if cur.rowcount == 0:
-        return jsonify({"error": "Customer not found"}), 404
+        return jsonify({"error": "Dossier non trouvé"}), 404
     
-    return jsonify({"message": "Customer updated successfully"})
+    return jsonify({"message": "Dossier mis à jour"})
 
-@app.route('/create_customer', methods=['POST'])
-def create_customer():
+@app.route('/create_app', methods=['POST'])
+def create_app():
     data = request.json
     
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     cur.execute("SELECT MAX(SK_ID_CURR) FROM credits")
     max_id = cur.fetchone()[0]
-    new_id = max_id + 1 if max_id else 100001  # Starting ID if table is empty
+    new_id = max_id + 1
     
     columns = ', '.join(data.keys())
     placeholders = ', '.join(['?' for _ in data])
@@ -57,7 +57,7 @@ def create_customer():
     conn.commit()
     conn.close()
     
-    return jsonify({"message": "Customer created successfully", "SK_ID_CURR": new_id})
+    return jsonify({"message": "Dossier créé avec succès", "SK_ID_CURR": new_id})
 
 if __name__ == '__main__':
     app.run(debug=True)
