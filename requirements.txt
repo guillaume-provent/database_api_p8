@@ -1,5 +1,5 @@
 psutil==5.9.8
 pyyaml==6.0.1
 flask==3.0.3
-gunicorn==22.0.0
+gunicorn==23.0.0
 pytest==8.2.2
